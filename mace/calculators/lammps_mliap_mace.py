@@ -124,12 +124,13 @@ class LAMMPS_MLIAP_MACE(MLIAPUnified):
 
         if using_kokkos and not self.config.force_cpu:
             device = torch.as_tensor(data.elems).device
-            if device.type == "cpu" and not self.config.allow_cpu:
-                raise ValueError(
-                    "GPU requested but tensor is on CPU. Set MACE_ALLOW_CPU=true to allow CPU computation."
-                )
         else:
             device = torch.device("cpu")
+
+        if device.type == "cpu" and not self.config.allow_cpu:
+            raise ValueError(
+                "GPU requested but tensor is on CPU. Set MACE_ALLOW_CPU=true to allow CPU computation."
+            )
 
         self.device = device
         self.model = self.model.to(device)
